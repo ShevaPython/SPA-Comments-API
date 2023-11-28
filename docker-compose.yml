@@ -1,0 +1,27 @@
+services:
+  web:
+    container_name: django-api-container
+    build: .
+    command: ["./wait-for-it.sh", "mysql:3306", "--", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    environment:
+      DJANGO_DB_HOST: mysql
+      DJANGO_DB_PORT: 3306
+      DJANGO_DB_NAME: DB_Comments
+      DJANGO_DB_USER: root
+      DJANGO_DB_PASSWORD: admin
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_DATABASE: 'DB_Comments'
+      MYSQL_PASSWORD: 'admin'
+      MYSQL_ROOT_PASSWORD: 'admin'
+    ports:
+      - "3306:3306"

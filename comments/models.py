@@ -1,5 +1,14 @@
 from django.db import models
 from users.models import CustomUser
+from datetime import datetime
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+
+
+def upload_comment_image(instance, filename):
+    now = timezone.now()
+    user_username = instance.user.username if instance.user else 'anonymous'
+    return f'comment_images/{now.year}/{now.month}/{now.day}/{user_username}/{filename}'
 
 
 class Comment(models.Model):
@@ -25,7 +34,7 @@ class Comment(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
-    image = models.ImageField(upload_to='media/comment_images/', blank=True, null=True)  # Add an image field
+    image = models.ImageField(upload_to=upload_comment_image, blank=True, null=True)  # Add an image field
 
     class Meta:
         verbose_name = 'Comment'
@@ -34,7 +43,6 @@ class Comment(models.Model):
             models.Index(fields=['created_at']),
         ]
         ordering = ['-created_at']
-
 
     def __str__(self):
         return F"Comment_id: {self.id}"

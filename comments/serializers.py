@@ -1,19 +1,39 @@
-# serializers.py
 from rest_framework import serializers
 
 from users.models import CustomUser
 from .models import Comment
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class CustomUserCommentSerializer(serializers.ModelSerializer):
+    """Serializer for the CustomUser model."""
     class Meta:
         model = CustomUser
         fields = ['id', 'username', ]
 
 
 class CommentAllSerializer(serializers.ModelSerializer):
+    """
+        Serializer for the Comment model with additional information.
+
+        Attributes:
+        -----------
+        model : Comment
+            The comment model that this class serializes.
+
+        fields : list
+            List of fields of the Comment model that will be serialized.
+
+        Methods:
+        --------
+        get_replies(self, obj)
+            Method to get serialized responses to a comment.
+
+        to_representation(self, instance)
+            Overridden method to convert a Comment object into a dictionary.
+
+    """
     replies = serializers.SerializerMethodField()
-    user = CustomUserSerializer()
+    user = CustomUserCommentSerializer
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
 
     class Meta:
@@ -28,7 +48,7 @@ class CommentAllSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        # Убедимся, что created_at существует и не является строкой
+        # Let's make sure that created_at exists and is not a string
         if 'created_at' in representation and not isinstance(representation['created_at'], str):
             representation['created_at'] = representation['created_at'].strftime("%Y-%m-%d %H:%M")
 
@@ -36,7 +56,19 @@ class CommentAllSerializer(serializers.ModelSerializer):
 
 
 class RootCommentSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer()
+    """
+        A serializer for the Comment model representing the main comment.
+
+        Attributes:
+        -----------
+        model : Comment
+            The comment model that this class serializes.
+
+        fields : list
+            List of fields of the Comment model that will be serialized.
+
+    """
+    user = CustomUserCommentSerializer()
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
 
     class Meta:
@@ -45,7 +77,32 @@ class RootCommentSerializer(serializers.ModelSerializer):
 
 
 class NestedCommentSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer()
+    """
+        A serializer for the Comment model representing nested comments.
+
+        Attributes:
+        -----------
+        model : Comment
+            The comment model that this class serializes.
+
+        fields : list
+            List of fields of the Comment model that will be serialized.
+
+         Methods:
+        --------
+        get_replies(self, obj)
+        Method to get serialized responses to a comment.
+        Gets and serializes responses to the given comment.
+
+        Returns:
+        -------
+        list
+            Serialized data for responses to the comment.
+
+
+
+    """
+    user = CustomUserCommentSerializer()
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     replies = serializers.SerializerMethodField()
 
@@ -60,6 +117,18 @@ class NestedCommentSerializer(serializers.ModelSerializer):
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
+    """
+        Serializer for creating comments.
+
+        Fields:
+        - text: The text of the comment.
+        - image: The image attached to the comment.
+        - parent_comment_id: ID of the parent comment (optional).
+
+        Methods:
+        - create: Method to create the comment. If `parent_comment_id` is specified, creates a comment within the
+          specified parent comment. Otherwise creates the parent comment.
+    """
     parent_comment_id = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
@@ -67,7 +136,9 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = ['text', 'image', 'parent_comment_id']
 
     def create(self, validated_data):
+        # Get the current user from the query
         user = self.context['request'].user
+        # Extract parent comment ID from validated data
         parent_comment_id = validated_data.pop('parent_comment_id', None)
 
         if parent_comment_id:

@@ -5,12 +5,12 @@ import re
 
 
 class CustomUser(AbstractUser):
-    """Собственная модель пользователя для работы с ней"""
+    """Own user model to work with"""
     home_page = models.URLField(blank=True)
 
     def save(self, *args, **kwargs):
-        # Проверка, соответствует ли имя пользователя указанному формату (буквы и цифры латинского алфавита)
+        """Checking whether the user name corresponds to the specified format (Latin alphabet letters and digits)"""
         if not re.match("^[a-zA-Z0-9]+$", self.username):
-            raise ValidationError('Имя пользователя должно содержать только буквы и цифры латинского алфавита.')
+            raise ValidationError('The username must contain only letters and numbers of the Latin alphabet.')
 
         super().save(*args, **kwargs)

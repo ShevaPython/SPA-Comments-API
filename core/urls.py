@@ -19,13 +19,19 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .yasg import urlpatterns as doc_urls_swagger
+
 # url.py core
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', include('users.urls', namespace='users')),
-    path('', include('comments.urls')),
+    path('api/v1/drf-auth/',include('rest_framework.urls')),
+    path('api/v1/users/', include('users.urls', namespace='users')),
+    path('api/v1/comments/', include('comments.urls',namespace='comments')),
+
 ]
 
+urlpatterns += doc_urls_swagger
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
+
