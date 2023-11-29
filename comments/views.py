@@ -1,4 +1,3 @@
-from django.db.models import Exists, OuterRef
 from django.shortcuts import redirect
 from rest_framework import generics, status
 from rest_framework.filters import OrderingFilter
@@ -63,6 +62,7 @@ class CommentAllListView(generics.ListAPIView):
     serializer_class = CommentAllSerializer
     filter_backends = [OrderingFilter]
     ordering_fields = ['user__username', 'user__email', 'created_at']
+    pagination_class = PaginationComments
 
 
 class RootCommentListView(generics.ListAPIView):
