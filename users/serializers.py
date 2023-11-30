@@ -15,14 +15,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
         validators=[validate_password],
         style={'input_type': 'password'}
     )
-
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'}
+    )
     home_page = serializers.URLField(required=False)
     email = serializers.EmailField(required=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'home_page', 'password']
+        fields = ['id', 'username', 'email', 'home_page', 'password','confirm_password']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_confirm_password(self, confirm_password):
+        """Validate that the passwords match."""
+        password = self.initial_data.get('password')
+
+        if password != confirm_password:
+            raise serializers.ValidationError("Passwords do not match.")
+
+        return confirm_password
 
     def validate_email(self, value):
         """Validate that the email address is unique."""
@@ -42,7 +55,15 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
         return value
 
+
+
     def create(self, validated_data):
         """Create and return a new user instance."""
+        confirm_password = validated_data.pop('confirm_password', None)
+        password = validated_data.get('password')
+
+        if password != confirm_password:
+            raise serializers.ValidationError("Passwords do not match.")
+
         user = CustomUser.objects.create_user(**validated_data)
         return user

@@ -4,47 +4,45 @@ SPA-Comments-API is a web application that provides an API for managing comments
 The application is built using Django REST Framework (DRF) and a MySQL database.
 It also provides both session-based and JWT token-based user authentication.
 
-## Установка локально Linux
+## Install Linux locally.
 
-Команды вля вашей операционной системы могут немного отличаться
-Если пакеты у вас есть этот шаг можно пропустить
-
-1. **Установите необходимые инструменты:**
+The commands for your operating system may be slightly different.
+If you have packages you can skip this step. The project is initially configured to run via docker so see Chapter 6. and configure the database according to your data.
+1. **Install the necessary tools:**
     ```bash
     sudo apt-get update
     sudo apt-get install -y python3 python3-pip virtualenv mysql-server
    ```
 
-   Если пакеты у вас есть этот шаг можно пропустить
+   If you have the packages, you can skip this step
 
-2. **Создайте папку для проекта :**
+2. **Create a folder for the project:**
     ```bash
    mkdir my_project
    ```
-3. **Клонирование и настройка проекта:**
+3. **Cloning and customization of the project:**
    ```bash
    git clone git@github.com:ShevaPython/SPA-Comments-API.git
    ```
 
-У Вас появиться папка SPA-Comments-API это будет главная папка вашего проэкта
-
-4. **Активируйте виртуальное окружение:**
+You will see the SPA-Comments-API folder, which will be the main folder of your project.
+4. **Activate the virtual environment:**.
    ```bash
    cd SPA-Comments-API
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-5. **Установите зависимости:**
+5. **Set dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-6. **Создайте базу данных:**
-   Запустите MySQL и создайте базу данных, которую вы указали в `DATABASES['default']['NAME']`
+6. **Create a database:**
+   Start MySQL and create the database you specified in `DATABASES['default']['NAME']`
    SPA-Comments-API/core/settings.py.
-   Например, с использованием командной строки MySQL:Подробно как подключить Mysql можете ознакомиться
-   здесь https://metanit.com/python/django/5.9.php
+   For example, using the MySQL command line:For details on how to connect Mysql, please see
+   here https://metanit.com/python/django/5.9.php
 
    ```bash
    mysql -u root -p
@@ -54,135 +52,171 @@ It also provides both session-based and JWT token-based user authentication.
    ```
 
 
-7. **Применение миграций:**
+7. **Application of Migrations:**.
     ```bash
     python manage.py migrate
     ```
 
-8. **Создание суперпользователя:**
+8. **Creating a superuser:**
 
    ```bash
    python manage.py createsuperuser
    ```
 
-9. **Запуск проекта**
+9. **Project Launch**
    ```bash
    python manage.py runserver
    ```
 
-Ваше приложение будет доступно по адресу: http://localhost:8000/swagger/ -это документация о API!
-Теперь у вас должно быть локальное развернутое приложение с базой данных MySQL. Убедитесь, что вы предоставили
-корректные
-значения в вашем файле SPA-Comments-API/core/settings.py для подключения к базе данных.
+Your application will be available at: http://localhost:8000/swagger/ -this is the documentation about the API!
+You should now have a locally deployed application with a MySQL database. Make sure you have provided
+correct
+values in your SPA-Comments-API/core/settings.py file to connect to the database.
 
-## Запуск через докер Linux
+## Docker startup
 
-Для локальной установки вам потребуется Docker и Docker Compose. Если у вас их еще нет, вы можете следовать инструкциям
-по установке:
+You will need Docker and Docker Compose for installation. If you don't already have them, you can follow the instructions below
+for installation:
 
 1. **Установите Docker:**
-    - [Установка Docker на Windows](https://docs.docker.com/desktop/install/windows-install/)
-    - [Установка Docker на macOS](https://docs.docker.com/desktop/install/mac-install/)
-    - [Установка Docker на Linux](https://docs.docker.com/desktop/install/linux-install/)
+    - [Install Docker on Windows](https://docs.docker.com/desktop/install/windows-install/)
+    - [Install Docker on macOS](https://docs.docker.com/desktop/install/mac-install/)
+    - [Install Docker on Linux](https://docs.docker.com/desktop/install/linux-install/)
 
-2. **Установите Docker Compose:**
-    - [Установка Docker Compose](https://docs.docker.com/compose/install/)
+2. **Install Docker Compose:**
+    - [Install Docker Compose](https://docs.docker.com/compose/install/)
 
-3. **Клонируйте репозиторий в заранее созданую папку с виртуальным окружением:**
+3. **Clone the repository into the previously created my_project:** folder.
    ```bash
    git clone git@github.com:ShevaPython/SPA-Comments-API.git
    ```
 
-У Вас появиться папка SPA-Comments-API это будет главная папка вашего проэкта
+You will see the SPA-Comments-API folder, which will be the main folder of your project.
 
-4. **Активируйте виртуальное окружение:**
+4. **Activate the virtual environment:**
    ```bash
    cd SPA-Comments-API
    python3 -m venv venv
    source venv/bin/activate
    ``` 
-4. **Збор докер контейнера**
+5. **Build containers from docker-compose.yaml**.
    ```bash
    docker compose build
    ```
-4. **Запуск докер контейнера**
+6. **Docker container launch**
    ```bash
    docker compose up
    ```
-   Если с первого раза контейнер не запустился попробуйте остановить его и запустить заново
+7. **If the container does not start the first time, try stopping it and starting it again**
     ```bash
-      docker compose stop
-       docker compose up
-      ```
-5. **Эти команды выполнятся внутри контейнера, и вы сможете создать миграции и суперпользователя, как если бы вы
-   выполняли эти команды локально в виртуальной среде Django.**
+    docker compose stop
+    docker compose up
+    ```
+8. **These commands will be executed inside the container, and you will be able to create migrations and superuser as if you are
+   execute these commands locally in a virtual Django environment.**
 
     ```bash
-   # Создание миграций
+   # Create migrations
    docker exec -it django-api-container python manage.py makemigrations
    
-   # Применение миграций
+   # Application of migrations  
    docker exec -it django-api-container python manage.py migrate
    
-   # Создание суперпользователя
+   # Create superuser
    docker exec -it django-api-container python manage.py createsuperuser
     
    ```
-6. **Итоги Docker контейнера:**
-После успешной сборки вы выполните команду docker-compose up, которая запустит контейнеры. Django-приложение будет
-доступно на http://localhost:8000/, а MySQL будет доступен на localhost:3306.
+9. **Docker container totals:**
+After a successful build, you will run the docker-compose up command, which will start the containers. The Django application will be
+available at http://localhost:8000/, and MySQL will be available at localhost:3306.
 
-## Автодокументация с Swagger
+## Auto-documentation with Swagger
 
-SPA-Comments-API предоставляет автодокументацию API с использованием Swagger. Swagger представляет собой инструмент для
-создания, документирования и потребления веб-сервисов. С его помощью вы можете легко понять структуру API, опробовать
-запросы и получить доступ к интерактивной документации.
+SPA-Comments-API provides API auto-documentation using Swagger. Swagger is a tool for
+creating, documenting and consuming web services. With its help, you can easily understand the API structure, try out
+requests, and access interactive documentation.
 
-### Как использовать Swagger  or Redoc
-Доступ к документации
+### How to use Swagger or Redoc
+Access to documentation :
 Swagger: http://localhost:8000/swagger/
 ReDoc: http://localhost:8000/redoc/
 
-После успешного запуска Docker контейнеров, вы можете открыть Swagger UI, перейдя по следующему URL-адресу:
-
+After successfully launching Docker containers, you can open the Swagger UI by going to the following URL:
 - [Swagger UI](http://localhost:8000/swagger/)
 
-Здесь вы найдете подробное описание всех доступных эндпоинтов, схему запросов и ответов, а также возможность отправлять
-запросы и тестировать функциональность API прямо из интерфейса Swagger.
+Here you will find a detailed description of all available endpoints, a scheme of requests and responses, as well as the ability to send requests and test API functionality directly from the Swagger interface.
 
 ### Преимущества использования Swagger
 
-1. **Легкая навигация по API:** Swagger предоставляет понятную структуру API, что облегчает навигацию и понимание
-   доступных эндпоинтов.
+### Benefits of using Swagger
 
-2. **Тестирование запросов:** Вы можете использовать Swagger UI для отправки запросов на эндпоинты и проверки ответов в
-   удобном интерфейсе.
+1. **Easy API navigation:** Swagger provides a clear API structure that makes it easy to navigate and understand the
+   the available endpoints.
+
+2. **Query Testing:** Using the Swagger user interface, you can send queries to endpoints and test the responses in a
+   user-friendly interface.
 
 
-## Аутентификация и Регистрация
+### Authentication and Registration
 
-### Регистрация (/register/)
+### Registration 
 
-Чтобы зарегистрировать нового пользователя, отправьте POST-запрос на http://localhost:8000/api/v1/users/register/ с необходимыми данными пользователя.
+To register a new user, send a POST request to http://localhost:8000/api/v1/users/register/ with the required user data.
 
-### Аутентификация по токену (JWT)
+### ### Session-based authentication
+Simply enter your account username and password.
 
-Для аутентификации по токену используется JSON Web Token (JWT). После успешной аутентификации вы получите токен доступа. Этот токен следует включать в заголовок Authorization каждого последующего запроса, требующего аутентификации.
+### Token-based authentication (JWT)
 
-Пример запроса на получение токена с использованием cURL:http://localhost:8000/api/v1/users/api/token/
+JSON Web Token (JWT) is used for token authentication. After successful authentication, you will receive an access token. This token should be included in the Authorization header of each subsequent request that requires authentication.
+
+Example of a token request using cURL:http://localhost:8000/api/v1/users/api/token/
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{"email": "user@example.com", "password": "securepassword"}' http://localhost:8000/api/v1/users/api/token/
 
 ```
-Пример заголовка Authorization для последующих запросов:
+An example of an Authorization header for subsequent requests:
 ```bash
 Authorization: Bearer your_access_token
 
 ```
-Проверка токена
-Чтобы проверить действительность токена доступа, отправьте POST-запрос на http://localhost:8000/api/v1/users/api/token/verify/ с токеном доступа.
+Token Validation
+To verify the validity of an access token, send a POST request to http://localhost:8000/api/v1/users/api/token/verify/ with the access token.
 
-Обновление токена доступа http://localhost:8000/api/v1/users/api/token/refresh/
-это эндпоинт для обновления токена доступа в вашем API. Этот путь предоставляет возможность обновить токен доступа, если он истек или близок к истечению срока действия.
+Updating the access token http://localhost:8000/api/v1/users/api/token/refresh/
+is the endpoint for updating the access token in your API. This path provides a way to update your access token if it has expired or is close to expiration.
+# Manage Comments
+Creating a comment http://localhost:8000//api/v1/comments/create/
+* Description: The path is used to create a new comment.
+* Method: POST
+* Example Usage:
+```bash.
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <your_jwt_token>" -d '{"text": "New comment", "parent_comment": null, "image":"<your_image_data_data_as_base64>"}' http://localhost:8000/api/v1/comments/create/
+```
+List of all main comments and replies to them http://localhost:8000/api/v1/comments/list_all_info/
 
-# Управление Комментариями
+* Description: Path provides a complete list of all comments.
+* Method: GET
+* Example Usage:
+```bash
+curl http://localhost:8000/api/v1/comments/list_all_info/
+
+```
+Comment Details http://localhost:8000/api/v1/comments/1/
+
+* Description: Path provides details of a specific comment by its identifier.
+* Method: GET
+* Example Usage:
+```bash
+curl http://localhost:8000/api/v1/comments/1/
+ 
+```
+
+List of root comments http://localhost:8000//api/v1/comments/
+
+* Description: The path provides a list of root comments (without parent comments).
+* Method: GET
+* Example Usage:
+```bash
+curl http://localhost:8000/api/v1/comments/
+```
